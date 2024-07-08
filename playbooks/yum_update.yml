@@ -1,0 +1,25 @@
+---
+- name: Update CentOS 7
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update all packages to the latest version
+      yum:
+        name: "*"
+        state: latest
+      register: yum_update_result
+      ignore_errors: yes
+
+    - name: Check if yum update was successful
+      debug:
+        msg: "Yum update completed successfully."
+      when: yum_update_result is succeeded
+
+    - name: Check if yum update failed
+      debug:
+        msg: "Yum update failed."
+      when: yum_update_result is failed
+
+    - name: Output yum update results
+      debug:
+        var: yum_update_result

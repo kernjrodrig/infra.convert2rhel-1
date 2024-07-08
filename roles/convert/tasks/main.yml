@@ -20,14 +20,38 @@
     --no-rhsm
     {% endif %}
     2>&1
-  register: convert2rhel
+  register: convert2rhel_job
   args:
     executable: /bin/bash
   environment: "{{ convert_convert2rhel_env_vars }}"
   async: "{{ convert_async_timeout_maximum | int }}"
-  poll: "{{ convert_async_poll_interval | int }}"
-  changed_when: convert2rhel.rc != 0
+  poll: 0
   notify: Remove temporary configuration file
+
+- name: Debug convert2rhel_job
+  ansible.builtin.debug:
+    var: convert2rhel_job
+
+- name: Wait for convert2rhel job to finish
+  async_status:
+    jid: "{{ convert2rhel_job.ansible_job_id }}"
+  register: job_result
+  until: job_result.finished
+  retries: 100
+  delay: 30
+
+- name: Debug job_result
+  ansible.builtin.debug:
+    var: job_result
+
+- name: Ensure job_result has rc attribute
+  ansible.builtin.set_fact:
+    job_result_rc: "{{ job_result.rc | default(-1) }}"
+
+- name: Check if convert2rhel job succeeded
+  fail:
+    msg: "Convert2RHEL failed"
+  when: job_result_rc != 0
 
 - name: Include the parse_c2r_report role to check if conversion inhibited
   ansible.builtin.include_role:
@@ -49,4 +73,4 @@
     quiet: true
   changed_when: true
   notify: Display conversion status
-...
+
