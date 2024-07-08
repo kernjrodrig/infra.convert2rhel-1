@@ -1,6 +1,16 @@
 ---
 # defaults file for common
 
+common_centos7_repos:
+  - CentOS-Base.repo
+  - CentOS-CR.repo
+  - CentOS-Debuginfo.repo
+  - CentOS-fasttrack.repo
+  - CentOS-Media.repo
+  - CentOS-Sources.repo
+  - CentOS-Vault.repo
+  - CentOS-x86_64-kernel.repo
+
 common_centos8_repos:
   - CentOS-Linux-AppStream.repo
   - CentOS-Linux-BaseOS.repo
@@ -14,6 +24,8 @@ common_centos8_repos:
 
 common_supported_distribution: ['CentOS', 'OracleLinux', 'AlmaLinux', 'Rocky']
 common_supported_major_version: ['7', '8']
+
+common_convert2rhel_repo_satellite: false
 
 common_convert2rhel_repokey_url: https://www.redhat.com/security/data/fd431d51.txt
 common_convert2rhel_7_repofile_url: https://cdn-public.redhat.com/content/public/addon/dist/convert2rhel/server/7/7Server/x86_64/files/repofile.repo
